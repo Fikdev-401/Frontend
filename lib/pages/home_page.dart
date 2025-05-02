@@ -1,0 +1,502 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_frontend/bloc/goals_bloc.dart';
+import 'package:flutter_frontend/bloc/login_bloc.dart';
+import 'package:flutter_frontend/core/core.dart';
+import 'package:flutter_frontend/routes.dart';
+
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Data for playlists
+    final List<Map<String, dynamic>> playlists = [
+      {
+        'title': 'Tujuan hidup',
+        'color': Colors.purple,
+        'icon': Icons.lightbulb_outline,
+      },
+      {
+        'title': 'Rasa syukur',
+        'color': Colors.orange,
+        'icon': Icons.favorite_border,
+      },
+      {
+        'title': 'Pelajaran',
+        'color': Colors.teal,
+        'icon': Icons.school_outlined,
+      },
+      {
+        'title': 'Inspirasi',
+        'color': Colors.blue,
+        'icon': Icons.emoji_objects_outlined,
+      },
+      {
+        'title': 'Motivasi',
+        'color': Colors.red,
+        'icon': Icons.trending_up,
+      },
+      {
+        'title': 'Refleksi',
+        'color': Colors.green,
+        'icon': Icons.self_improvement_outlined,
+      },
+    ];
+
+    // Data for notes
+    final List<Map<String, dynamic>> notes = [
+      {
+        'date': '2 days ago',
+        'color': Colors.blueAccent,
+        'icon': Icons.person_outline,
+      },
+      {
+        'date': '3 days ago',
+        'color': Colors.purpleAccent,
+        'icon': Icons.favorite_outline,
+      },
+      {
+        'date': '1 week ago',
+        'color': Colors.greenAccent,
+        'icon': Icons.trending_up,
+      },
+      {
+        'date': '1 week ago',
+        'color': Colors.amberAccent,
+        'icon': Icons.attach_money,
+      },
+      {
+        'date': '2 weeks ago',
+        'color': Colors.redAccent,
+        'icon': Icons.flash_on_outlined,
+      },
+      {
+        'date': '3 weeks ago',
+        'color': Colors.tealAccent,
+        'icon': Icons.auto_stories_outlined,
+      },
+    ];
+
+    // Recently played data
+    final List<Map<String, dynamic>> recentlyPlayed = [
+      {
+        'title': 'Motivasi Pagi',
+        'type': 'Daily Motivation',
+        'imageUrl': '/placeholder.svg?height=150&width=150',
+        'color': Colors.orange,
+      },
+      {
+        'title': 'Quotes Inspiratif',
+        'type': 'Collection',
+        'imageUrl': '/placeholder.svg?height=150&width=150',
+        'color': Colors.purple,
+      },
+      {
+        'title': 'Meditasi Malam',
+        'type': 'Relaxation',
+        'imageUrl': '/placeholder.svg?height=150&width=150',
+        'color': Colors.indigo,
+      },
+      {
+        'title': 'Affirmasi Harian',
+        'type': 'Self-improvement',
+        'imageUrl': '/placeholder.svg?height=150&width=150',
+        'color': Colors.teal,
+      },
+    ];
+
+    return Scaffold(
+      backgroundColor: AppColors.backgroundDark,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with profile and actions
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Row(
+                  children: [
+                    // Profile avatar with notification dot
+                    Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundColor: AppColors.surface,
+                          backgroundImage:
+                              const AssetImage('assets/images/dev.jpg'),
+                        ),
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: AppColors.spotifyGreen,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.backgroundDark,
+                                width: 1.5,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(width: 12),
+
+                    // Filter buttons
+                    Expanded(
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildFilterButton('Semua', true),
+                            const SizedBox(width: 8),
+                            _buildFilterButton('Note', false),
+                            const SizedBox(width: 8),
+                            _buildFilterButton('Goals', false),
+                            const SizedBox(width: 8),
+                            _buildFilterButton('Quotes', false),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Logout button
+                  ],
+                ),
+              ),
+
+              // Greeting section with gradient
+              Container(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Good Morning Dev :3',
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'What would you like to note today?',
+                      style: TextStyle(
+                        color: AppColors.white.withOpacity(0.7),
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Top playlists grid
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    childAspectRatio: 2.8,
+                  ),
+                  itemCount: 6,
+                  itemBuilder: (context, index) {
+                    if (index >= playlists.length) return const SizedBox();
+
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 50,
+                            height: double.infinity,
+                            decoration: BoxDecoration(
+                              color: playlists[index]['color'],
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(4),
+                                bottomLeft: Radius.circular(4),
+                              ),
+                            ),
+                            child: Icon(
+                              playlists[index]['icon'],
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              playlists[index]['title'],
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Recently played section
+              const SizedBox(height: 32),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Recently Played',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: recentlyPlayed.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              color: recentlyPlayed[index]['color'],
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 5,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                              image: DecorationImage(
+                                image: NetworkImage(
+                                    recentlyPlayed[index]['imageUrl']),
+                                fit: BoxFit.cover,
+                                opacity: 0.7,
+                              ),
+                            ),
+                            child: Center(
+                              child: Icon(
+                                _getIconForType(recentlyPlayed[index]['type']),
+                                color: Colors.white,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          SizedBox(
+                            width: 150,
+                            child: Text(
+                              recentlyPlayed[index]['title'],
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 150,
+                            child: Text(
+                              recentlyPlayed[index]['type'],
+                              style: TextStyle(
+                                color: AppColors.lightGray,
+                                fontSize: 12,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Daily notes section
+              const SizedBox(height: 32),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  'Goals',
+                  style: TextStyle(
+                    color: AppColors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              BlocBuilder<GoalsBloc, GoalsState>(builder: (context, state) {
+                if (state is GoalsLoading) {
+                  return Center(child: const CircularProgressIndicator());
+                } else if (state is GoalsLoaded) {
+                  final data = state.goals;
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: data.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 5,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            leading: Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: notes[index]['color'],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(
+                                notes[index]['icon'],
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            title: Text(
+                              data[index].title,
+                              style: const TextStyle(
+                                color: AppColors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  data[index].description,
+                                  style: TextStyle(
+                                    color: AppColors.lightGray,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  notes[index]['date'],
+                                  style: TextStyle(
+                                    color: AppColors.lightGray.withOpacity(0.7),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(
+                                Icons.more_vert,
+                                color: AppColors.lightGray,
+                              ),
+                              onPressed: () {
+                                // Show options menu
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                } else if (state is GoalsError) {
+                  return Center(
+                    child: Text(
+                      state.message,
+                      style: TextStyle(color: AppColors.white),
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              }),
+              const SizedBox(height: 80), // Space for bottom navigation bar
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterButton(String text, bool isActive) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isActive ? AppColors.spotifyGreen : AppColors.surface,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        minimumSize: const Size(0, 32),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+      onPressed: () {},
+      child: Text(
+        text,
+        style: TextStyle(
+          color: isActive ? AppColors.black : AppColors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  IconData _getIconForType(String type) {
+    switch (type) {
+      case 'Daily Motivation':
+        return Icons.emoji_emotions_outlined;
+      case 'Collection':
+        return Icons.collections_bookmark_outlined;
+      case 'Relaxation':
+        return Icons.nightlight_round;
+      case 'Self-improvement':
+        return Icons.psychology_outlined;
+      default:
+        return Icons.note_outlined;
+    }
+  }
+}
