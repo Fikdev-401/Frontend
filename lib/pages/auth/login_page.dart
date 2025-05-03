@@ -77,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                               // Navigasi langsung tanpa login logic
                               redirectToHome();
                             } else if (state is LoginError) {
+                              print(state.message);
                               // Tampilkan pesan kesalahan
                               showDialog(
                                   context: context,

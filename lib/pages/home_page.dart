@@ -1,13 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/goals_bloc.dart';
-import 'package:flutter_frontend/bloc/login_bloc.dart';
 import 'package:flutter_frontend/core/core.dart';
-import 'package:flutter_frontend/routes.dart';
+import 'package:flutter_frontend/utils/session_manager.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+
+}
+
+class _HomePageState extends State<HomePage> {
+  int? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId();
+  }
+
+  Future<void> _loadUserId() async {
+    final id = await SessionManager().getUserId();
+    setState(() {
+      userId = id;
+    });
+
+    // fetch data goals berdasarkan user
+    context.read<GoalsBloc>().add(LoadGoals(userId: id));
+  }
   @override
   Widget build(BuildContext context) {
     // Data for playlists
@@ -365,6 +387,26 @@ class HomePage extends StatelessWidget {
                   return Center(child: const CircularProgressIndicator());
                 } else if (state is GoalsLoaded) {
                   final data = state.goals;
+                  if (data.isEmpty) {
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      color: AppColors.surface,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            const Text('Kamu belum menambahkan goal',
+                            style: TextStyle(
+                              color: AppColors.lightGray,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500
+                            ),
+                            ),
+                          ],
+                        ),
+                      )
+                    );
+                  }
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),

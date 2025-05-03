@@ -12,6 +12,7 @@ class ApiService {
 
   Future<LoginResponseModel> login(LoginRequestModel requestBody) async {
     final response = await dio.post('$baseUrl/api/login', data: requestBody.toJson());
+    print((response.data));
     return LoginResponseModel.fromJson(response.data);
   }
 

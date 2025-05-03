@@ -7,15 +7,15 @@ part 'goals_event.dart';
 part 'goals_state.dart';
 
 class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
-  final RemoteDatasource remoteDatasource; 
-  GoalsBloc({ required this.remoteDatasource}) : super(GoalsInitial()) {
+  final RemoteDatasource remoteDatasource;
+  GoalsBloc({required this.remoteDatasource}) : super(GoalsInitial()) {
     on<LoadGoals>((event, emit) async {
       emit(GoalsLoading());
       try {
-        final goals = await remoteDatasource.getGoals();
+        final goals = await remoteDatasource.getGoalsById(userId: event.userId);
         emit(GoalsLoaded(goals.data));
       } catch (e) {
-        emit(GoalsError( e.toString()));
+        emit(GoalsError(e.toString()));
       }
     });
   }

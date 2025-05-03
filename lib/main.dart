@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (_) => LoginBloc()),
           BlocProvider(create: (_) => RegisterBloc()),
-          BlocProvider(create: (_) => GoalsBloc(remoteDatasource: remoteDatasource)..add(LoadGoals()))
+          BlocProvider(create: (_) => GoalsBloc(remoteDatasource: remoteDatasource)),
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
