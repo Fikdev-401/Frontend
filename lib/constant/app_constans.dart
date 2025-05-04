@@ -1,5 +1,5 @@
 class AppConstans {
-  static const baseUrl = 'https://journal.fikdevs.my.id';
+  static const baseUrl = 'https://journal-v2.fikdevs.my.id';
 
   static const tokenKey = 'token_key';
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/bloc/goals_bloc.dart';
+import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
+import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
 import 'package:flutter_frontend/core/core.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 
@@ -9,7 +10,6 @@ class HomePage extends StatefulWidget {
 
   @override
   State<HomePage> createState() => _HomePageState();
-
 }
 
 class _HomePageState extends State<HomePage> {
@@ -28,8 +28,9 @@ class _HomePageState extends State<HomePage> {
     });
 
     // fetch data goals berdasarkan user
-    context.read<GoalsBloc>().add(LoadGoals(userId: id));
+    context.read<JournalsBloc>().add(LoadJournals(userId: id));
   }
+
   @override
   Widget build(BuildContext context) {
     // Data for playlists
@@ -63,40 +64,6 @@ class _HomePageState extends State<HomePage> {
         'title': 'Refleksi',
         'color': Colors.green,
         'icon': Icons.self_improvement_outlined,
-      },
-    ];
-
-    // Data for notes
-    final List<Map<String, dynamic>> notes = [
-      {
-        'date': '2 days ago',
-        'color': Colors.blueAccent,
-        'icon': Icons.person_outline,
-      },
-      {
-        'date': '3 days ago',
-        'color': Colors.purpleAccent,
-        'icon': Icons.favorite_outline,
-      },
-      {
-        'date': '1 week ago',
-        'color': Colors.greenAccent,
-        'icon': Icons.trending_up,
-      },
-      {
-        'date': '1 week ago',
-        'color': Colors.amberAccent,
-        'icon': Icons.attach_money,
-      },
-      {
-        'date': '2 weeks ago',
-        'color': Colors.redAccent,
-        'icon': Icons.flash_on_outlined,
-      },
-      {
-        'date': '3 weeks ago',
-        'color': Colors.tealAccent,
-        'icon': Icons.auto_stories_outlined,
       },
     ];
 
@@ -373,7 +340,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'Goals',
+                  'ur Journals',
                   style: TextStyle(
                     color: AppColors.white,
                     fontSize: 22,
@@ -382,11 +349,11 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 16),
-              BlocBuilder<GoalsBloc, GoalsState>(builder: (context, state) {
+              BlocBuilder<JournalsBloc, JournalsState>(builder: (context, state) {
                 if (state is GoalsLoading) {
                   return Center(child: const CircularProgressIndicator());
-                } else if (state is GoalsLoaded) {
-                  final data = state.goals;
+                } else if (state is JournalsLoaded) {
+                  final data = state.journals;
                   if (data.isEmpty) {
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -395,16 +362,16 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
-                            const Text('Kamu belum menambahkan goal',
-                            style: TextStyle(
-                              color: AppColors.lightGray,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500
-                            ),
+                            const Text(
+                              'Kamu belum menambahkan goal',
+                              style: TextStyle(
+                                  color: AppColors.lightGray,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
-                      )
+                      ),
                     );
                   }
                   return ListView.builder(
@@ -430,19 +397,7 @@ class _HomePageState extends State<HomePage> {
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
-                            leading: Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: notes[index]['color'],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Icon(
-                                notes[index]['icon'],
-                                color: Colors.white,
-                                size: 24,
-                              ),
-                            ),
+                            // Hapus bagian leading
                             title: Text(
                               data[index].title,
                               style: const TextStyle(
@@ -456,7 +411,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 const SizedBox(height: 4),
                                 Text(
-                                  data[index].description,
+                                  data[index].desc,
                                   style: TextStyle(
                                     color: AppColors.lightGray,
                                     fontSize: 14,
@@ -464,7 +419,17 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  notes[index]['date'],
+                                  data[index]
+                                      .category
+                                      .title, // Menampilkan category.title
+                                  style: TextStyle(
+                                    color: AppColors.lightGray.withOpacity(0.7),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  data[index].createdAt.toString(),
                                   style: TextStyle(
                                     color: AppColors.lightGray.withOpacity(0.7),
                                     fontSize: 12,
@@ -486,7 +451,8 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                   );
-                } else if (state is GoalsError) {
+                } else if (state is JournalsError) {
+                  print(state.message);
                   return Center(
                     child: Text(
                       state.message,
@@ -497,6 +463,7 @@ class _HomePageState extends State<HomePage> {
                   return Container();
                 }
               }),
+
               const SizedBox(height: 80), // Space for bottom navigation bar
             ],
           ),
