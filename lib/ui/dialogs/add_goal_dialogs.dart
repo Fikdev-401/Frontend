@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/bloc/addGoals/bloc/add_goal_bloc.dart';
-import 'package:flutter_frontend/core/constants/colors.dart';
-import 'package:flutter_frontend/models/add_goal_request_model.dart';
+import 'package:flutter_frontend/bloc/addGoals/add_goal_bloc.dart';
+import 'package:flutter_frontend/models/request/add_goal_request_model.dart';
 
 class AddGoalDialog extends StatefulWidget {
   final int categoryId;

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/models/add_goal_request_model.dart';
-import 'package:flutter_frontend/models/add_goal_response_model.dart';
+import 'package:flutter_frontend/models/request/add_goal_request_model.dart';
+import 'package:flutter_frontend/models/response/add_goal_response_model.dart';
 import 'package:flutter_frontend/repositories/add_goal_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

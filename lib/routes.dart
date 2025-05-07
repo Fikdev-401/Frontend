@@ -1,7 +1,7 @@
 
-import 'package:flutter_frontend/pages/auth/login_page.dart';
-import 'package:flutter_frontend/pages/main_page.dart';
-import 'package:flutter_frontend/pages/auth/register_page.dart';
+import 'package:flutter_frontend/ui/pages/auth/login_page.dart';
+import 'package:flutter_frontend/ui/pages/main_page.dart';
+import 'package:flutter_frontend/ui/pages/auth/register_page.dart';
 
 enum MyRoute {
   login('/login'),

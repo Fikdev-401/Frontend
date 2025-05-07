@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/auth/register/register_bloc.dart';
-import 'package:flutter_frontend/models/register_request_model.dart';
+import 'package:flutter_frontend/models/request/register_request_model.dart';
 import 'package:flutter_frontend/routes.dart';
-import 'package:flutter_frontend/widget/error_dialogs.dart';
-import '../../../../core/core.dart';
+import 'package:flutter_frontend/ui/widget/error_dialogs.dart';
+import '../../../../../core/core.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

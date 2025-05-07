@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_frontend/data/models/caregory_goals.dart';
+import 'package:flutter_frontend/data/models/category_journal.dart' as catJournal;
 import 'package:flutter_frontend/data/models/goals.dart';
 import 'package:flutter_frontend/data/models/journals.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
@@ -55,5 +56,28 @@ class RemoteDatasource {
     );
     return DataCategoryGoals.fromJson(response.data);
   }
+ 
+  Future<List<catJournal.CategoryJournal>> getCategoryJournal() async {
+  final token = await session.getToken(); // ambil token dari SharedPreferences
+
+  final response = await dio.get(
+    '/category-journal',
+    options: Options(
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    ),
+  );
+
+  print(response.data); // Ini List<dynamic>
+
+  final List<catJournal.CategoryJournal> categories = (response.data as List)
+      .map((item) => catJournal.CategoryJournal.fromJson(item))
+      .toList();
+
+  return categories;
+}
+
 
 }

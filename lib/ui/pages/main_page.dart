@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_frontend/core/core.dart';
-import 'package:flutter_frontend/pages/home_page.dart';
-import 'package:flutter_frontend/pages/profile_page.dart';
-import 'package:flutter_frontend/pages/search_page.dart';
-import 'package:flutter_frontend/pages/task_page.dart';
-import 'package:flutter_frontend/pages/todos_page.dart';
-import 'package:flutter_frontend/widget/navitem.dart';
+import 'package:flutter_frontend/ui/pages/home_page.dart';
+import 'package:flutter_frontend/ui/pages/profile_page.dart';
+import 'package:flutter_frontend/ui/pages/search_page.dart';
+import 'package:flutter_frontend/ui/pages/task_page.dart';
+import 'package:flutter_frontend/ui/pages/todos_page.dart';
+import 'package:flutter_frontend/ui/widget/navitem.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/models/login_request_model.dart';
-import 'package:flutter_frontend/models/login_response_model.dart';
+import 'package:flutter_frontend/models/request/login_request_model.dart';
+import 'package:flutter_frontend/models/response/login_response_model.dart';
 import 'package:flutter_frontend/repositories/login_repository.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 

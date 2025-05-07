@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
 import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
+import 'package:flutter_frontend/bloc/journalsCategory/category_journal_bloc.dart';
 import 'package:flutter_frontend/core/core.dart';
+import 'package:flutter_frontend/ui/dialogs/add_journal_dialogs.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 
 class HomePage extends StatefulWidget {
@@ -29,12 +30,13 @@ class _HomePageState extends State<HomePage> {
 
     // fetch data goals berdasarkan user
     context.read<JournalsBloc>().add(LoadJournals(userId: id));
+    context.read<CategoryJournalBloc>().add(LoadCategoryJournal());
   }
 
   @override
   Widget build(BuildContext context) {
     // Data for playlists
-    final List<Map<String, dynamic>> playlists = [
+    final List<Map<String, dynamic>> data = [
       {
         'title': 'Tujuan hidup',
         'color': Colors.purple,
@@ -188,64 +190,95 @@ class _HomePageState extends State<HomePage> {
               // Top playlists grid
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 12,
-                    crossAxisSpacing: 12,
-                    childAspectRatio: 2.8,
-                  ),
-                  itemCount: 6,
-                  itemBuilder: (context, index) {
-                    if (index >= playlists.length) return const SizedBox();
-
-                    return Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: double.infinity,
-                            decoration: BoxDecoration(
-                              color: playlists[index]['color'],
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(4),
-                                bottomLeft: Radius.circular(4),
+                child: BlocBuilder<CategoryJournalBloc, CategoryJournalState>(
+                  builder: (context, state) {
+                    if (state is CategoryJournalLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is CategoryJournalLoaded) {
+                      final playlists = state.categoryJournal;
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 12,
+                          childAspectRatio: 2.8,
+                        ),
+                        itemCount: playlists.length,
+                        itemBuilder: (context, index) {
+                          final datas = playlists[index];
+                          return InkWell(
+                            onTap: () {
+                              print(datas.id);
+                              try {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AddJournalDialogs(
+                                    categoryId: datas.id,
+                                    categoryTitle: datas.title,
+                                  ),
+                                );
+                                print("Dialog shown successfully");
+                              } catch (e) {
+                                print("Error showing dialog: $e");
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.surface,
+                                borderRadius: BorderRadius.circular(4),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 50,
+                                    height: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: data[index]['color'],
+                                      borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(4),
+                                        bottomLeft: Radius.circular(4),
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      data[index]['icon'],
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      playlists[index].title,
+                                      style: const TextStyle(
+                                        color: AppColors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Icon(
-                              playlists[index]['icon'],
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              playlists[index]['title'],
-                              style: const TextStyle(
-                                color: AppColors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
+                          );
+                        },
+                      );
+                    } else if (state is CategoryJournalError) {
+                      print(state.message);
+                      return Center(child: Text(state.message));
+                    } else {
+                      return SizedBox(height: 0);
+                    }
                   },
                 ),
               ),
@@ -349,8 +382,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 16),
-              BlocBuilder<JournalsBloc, JournalsState>(builder: (context, state) {
-                if (state is GoalsLoading) {
+              BlocBuilder<JournalsBloc, JournalsState>(
+                  builder: (context, state) {
+                if (state is JournalsLoading) {
                   return Center(child: const CircularProgressIndicator());
                 } else if (state is JournalsLoaded) {
                   final data = state.journals;

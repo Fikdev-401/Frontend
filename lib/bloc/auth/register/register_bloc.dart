@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/models/register_request_model.dart';
-import 'package:flutter_frontend/models/register_response_nodel.dart';
+import 'package:flutter_frontend/models/request/register_request_model.dart';
+import 'package:flutter_frontend/models/response/register_response_nodel.dart';
 import 'package:flutter_frontend/repositories/register_repository.dart';
 
 part 'register_event.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
 import 'package:flutter_frontend/bloc/goalsCategory/category_goal_bloc.dart';
 import 'package:flutter_frontend/core/constants/colors.dart';
-import 'package:flutter_frontend/pages/add_goal_dialogs.dart';
+import 'package:flutter_frontend/ui/dialogs/add_goal_dialogs.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 

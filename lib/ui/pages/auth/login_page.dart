@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/auth/login/login_bloc.dart';
-import 'package:flutter_frontend/models/login_request_model.dart';
+import 'package:flutter_frontend/models/request/login_request_model.dart';
 import 'package:flutter_frontend/routes.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
-import 'package:flutter_frontend/widget/error_dialogs.dart';
-import '../../../../core/core.dart';
+import 'package:flutter_frontend/ui/widget/error_dialogs.dart';
+import '../../../../../core/core.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

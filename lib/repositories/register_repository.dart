@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_frontend/models/register_request_model.dart';
-import 'package:flutter_frontend/models/register_response_nodel.dart';
+import 'package:flutter_frontend/models/request/register_request_model.dart';
+import 'package:flutter_frontend/models/response/register_response_nodel.dart';
 import 'package:flutter_frontend/services/api_service.dart';
 
 class RegisterRepository {
