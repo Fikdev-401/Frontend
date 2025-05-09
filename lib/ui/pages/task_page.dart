@@ -4,6 +4,7 @@ import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
 import 'package:flutter_frontend/bloc/goalsCategory/category_goal_bloc.dart';
 import 'package:flutter_frontend/core/constants/colors.dart';
 import 'package:flutter_frontend/ui/dialogs/add_goal_dialogs.dart';
+import 'package:flutter_frontend/ui/pages/detail_goal_page.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -211,8 +212,9 @@ class _TaskPageState extends State<TaskPage> {
                                 showDialog(
                                   context: context,
                                   builder: (context) => AddGoalDialog(
-                                    categoryId: category.id, 
-                                    categoryTitle: category.title,// <-- kirim id-nya
+                                    categoryId: category.id,
+                                    categoryTitle:
+                                        category.title, // <-- kirim id-nya
                                   ),
                                 );
                               },
@@ -278,7 +280,7 @@ class _TaskPageState extends State<TaskPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'IN PROGRESS',
+                      'STARTED',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -409,7 +411,7 @@ class _TaskPageState extends State<TaskPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      'MY GOALS',
+                      'BELUM START',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12,
@@ -514,7 +516,7 @@ class _TaskPageState extends State<TaskPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      data[index].category.title,
+                                      "Category : " + data[index].category.title,
                                       style: TextStyle(
                                         color: AppColors.lightGray
                                             .withOpacity(0.7),
@@ -523,7 +525,7 @@ class _TaskPageState extends State<TaskPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      data[index].createdAt.toString(),
+                                      "Status : " + data[index].status.name,
                                       style: TextStyle(
                                         color: AppColors.lightGray
                                             .withOpacity(0.7),
@@ -539,6 +541,19 @@ class _TaskPageState extends State<TaskPage> {
                                   ),
                                   onPressed: () {
                                     // Show options menu
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DetailGoalPage(
+                                          id: data[index].id,
+                                          title: data[index].title,
+                                          desc: data[index].desc,
+                                          categoryId: data[index].category.id,
+                                          categoryTitle:
+                                              data[index].category.title,
+                                        ),
+                                      ),
+                                    );
                                   },
                                 ),
                               ),

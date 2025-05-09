@@ -4,6 +4,7 @@ import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
 import 'package:flutter_frontend/bloc/journalsCategory/category_journal_bloc.dart';
 import 'package:flutter_frontend/core/core.dart';
 import 'package:flutter_frontend/ui/dialogs/add_journal_dialogs.dart';
+import 'package:flutter_frontend/ui/pages/detail_journal_page.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 
 class HomePage extends StatefulWidget {
@@ -477,7 +478,18 @@ class _HomePageState extends State<HomePage> {
                                 color: AppColors.lightGray,
                               ),
                               onPressed: () {
-                                // Show options menu
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DetailJournalPage(
+                                      id: data[index].id,
+                                      title: data[index].title,
+                                      desc: data[index].desc,
+                                      categoryId: data[index].category.id,
+                                      categoryTitle: data[index].category.title,
+                                    ),
+                                  ),
+                                );
                               },
                             ),
                           ),

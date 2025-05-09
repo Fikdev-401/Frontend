@@ -42,8 +42,8 @@ class Journal {
       id: json["id"],
       userId: json["user_id"],
       categoryJournalId: json["category_journal_id"],
-      title: json["title"],
-      desc: json["desc"],
+      title: json["title"] ?? '',
+      desc: json["desc"] ?? '',
       createdAt: DateTime.parse(json["created_at"]),
       updatedAt: DateTime.parse(json["updated_at"]),
       category: CategoryJournal.fromJson(json["category"]),
@@ -80,7 +80,7 @@ class CategoryJournal {
   factory CategoryJournal.fromJson(Map<String, dynamic> json) {
     return CategoryJournal(
       id: json["id"],
-      title: json["title"],
+      title: json["title"] ?? '',
       createdAt: DateTime.parse(json["created_at"]),
       updatedAt: DateTime.parse(json["updated_at"]),
     );
