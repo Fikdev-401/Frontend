@@ -5,5 +5,11 @@ sealed class AddGoalEvent{}
 
 final class AddGoal extends AddGoalEvent {
   final AddGoalRequestModel requestBody;
-  AddGoal({required this.requestBody});
+  AddGoal(this.requestBody);
+}
+
+class EditGoal extends AddGoalEvent {
+  final AddGoalRequestModel requestBody;
+  final int id;
+  EditGoal(this.requestBody, this.id);
 }

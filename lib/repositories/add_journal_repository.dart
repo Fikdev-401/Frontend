@@ -17,4 +17,12 @@ class AddJournalRepository {
       return left('Failed to login: $e');
     }
   }
+  Future<Either<String, AddJournalResponseModel>> editJournal(AddJournalRequestModel requestBody, int id) async {
+    try {
+      final result = await apiService.editJournal(requestBody, id);
+      return right(result);
+    } catch (e) {
+      return left('Failed to login: $e');
+    }
+  }
 }

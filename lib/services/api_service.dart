@@ -57,4 +57,36 @@ class ApiService {
     );
     return AddJournalResponseModel.fromJson(response.data);
   }
+
+  Future<AddJournalResponseModel> editJournal(AddJournalRequestModel requestBody, int id) async {
+    final token = await sessionManager
+        .getToken(); // ambil dari SharedPreferences, misalnya
+    final response = await dio.put(
+      '$baseUrl/api/journals/$id',
+      data: requestBody.toJson(),
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    return AddJournalResponseModel.fromJson(response.data);
+  }
+  Future<AddGoalResponseModel> editGoal(AddGoalRequestModel requestBody, int id) async {
+    final token = await sessionManager
+        .getToken(); // ambil dari SharedPreferences, misalnya
+    final response = await dio.put(
+      '$baseUrl/api/goals/$id',
+      data: requestBody.toJson(),
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      ),
+    );
+    print(response.data);
+    return AddGoalResponseModel.fromJson(response.data);
+  }
+
+
 }

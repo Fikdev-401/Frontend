@@ -7,3 +7,10 @@ final class LoadJournals extends JournalsEvent {
   final int userId;
   LoadJournals({required this.userId});
 }
+
+final class DeleteJournal extends JournalsEvent {
+  final int id;
+  DeleteJournal({required this.id});
+}
+
+

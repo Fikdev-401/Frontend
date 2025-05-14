@@ -24,3 +24,21 @@ class AddGoalBloc extends Bloc<AddGoalEvent, AddGoalState> {
     });
   }
 }
+
+class EditGoalBloc extends Bloc<AddGoalEvent, AddGoalState> {
+  final repository = AddGoalRepository();
+  EditGoalBloc() : super(AddGoalInitial()) {
+    on<EditGoal>((event, emit) async {
+      emit(EditGoalLoading());
+      try {
+        final result = await repository.editGoal(event.requestBody, event.id);
+        result.fold(
+          (error) => emit(EditGoalError(error)),
+          (response) => emit(EditGoalLoaded(response)),
+        );
+      } catch (e) {
+        emit(EditGoalError(e.toString()));
+      }
+    });
+  }
+}

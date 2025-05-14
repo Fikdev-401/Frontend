@@ -20,3 +20,18 @@ class JournalsBloc extends Bloc<JournalsEvent, JournalsState> {
     });
   }
 }
+
+class DeleteJournalBloc extends Bloc<DeleteJournal, JournalsState> {
+  final RemoteDatasource remoteDatasource;
+  DeleteJournalBloc({required this.remoteDatasource}) : super(DeleteJournalInitial()) {
+    on<DeleteJournal>((event, emit) async {
+      emit(DeleteJournalLoading());
+      try {
+        await remoteDatasource.deleteJournal(event.id);
+        emit(DeleteJournalSuccess());
+      } catch (e) {
+        emit(DeleteJournalError(message: e.toString()));
+      }
+    });
+  }
+}

@@ -10,6 +10,7 @@ import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
 import 'package:flutter_frontend/bloc/journalsCategory/category_journal_bloc.dart';
 import 'package:flutter_frontend/data/datasource/remote_datasource.dart';
 import 'package:flutter_frontend/routes.dart';
+import 'package:flutter_frontend/ui/pages/add_journal_pages.dart';
 import 'package:flutter_frontend/ui/pages/auth/splash_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -38,10 +39,17 @@ class MyApp extends StatelessWidget {
               create: (_) =>
                   CategoryGoalBloc(remoteDatasource: remoteDatasource)),
           BlocProvider(create: (_) => AddGoalBloc()),
-          BlocProvider(create: (_) => AddJournalBloc()),
+          BlocProvider(create: (_) => AddJournalBloc(),
+          child: AddJournalPage(),
+          ),
           BlocProvider(
               create: (_) =>
-                  CategoryJournalBloc(remoteDatasource: remoteDatasource))
+                  CategoryJournalBloc(remoteDatasource: remoteDatasource)),
+          BlocProvider(create: (_) => EditGoalBloc()),
+          BlocProvider(create: (_) => EditJournalBloc()),
+          BlocProvider(create: (_) => DeleteJournalBloc(remoteDatasource: remoteDatasource)),
+          BlocProvider(create: (_) => DeleteGoalBloc(remoteDatasource: remoteDatasource)),
+          
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

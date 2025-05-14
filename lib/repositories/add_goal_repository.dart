@@ -16,4 +16,13 @@ class AddGoalRepository {
       return left('Failed to login: $e');
     }
   }
+
+  Future<Either<String, AddGoalResponseModel>> editGoal(AddGoalRequestModel requestBody, int id) async {
+    try {
+      final result = await apiService.editGoal(requestBody, id);
+      return right(result);
+    } catch (e) {
+      return left('Failed to login: $e');
+    }
+  }
 }

@@ -5,29 +5,38 @@ import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
 import 'package:flutter_frontend/models/request/add_journal_request_model.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 
-class AddJournalDialogs extends StatefulWidget {
+class EditJournalDialogs extends StatefulWidget {
+  final int journalId;
   final int categoryId;
-  final String categoryTitle; // Tambahkan parameter untuk judul kategori
+  final String categoryTitle;
+  final String journalTitle;
+  final String journalDesc;
 
-  const AddJournalDialogs({
+  const EditJournalDialogs({
     Key? key,
+    required this.journalId,
     required this.categoryId,
-    required this.categoryTitle, // Tambahkan parameter ini
+    required this.categoryTitle,
+    required this.journalTitle,
+    required this.journalDesc,
   }) : super(key: key);
 
   @override
-  State<AddJournalDialogs> createState() => _AddJournalDialogState();
+  State<EditJournalDialogs> createState() => _EditJournalDialogState();
 }
 
-class _AddJournalDialogState extends State<AddJournalDialogs> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
+class _EditJournalDialogState extends State<EditJournalDialogs> {
+  late TextEditingController titleController;
+  late TextEditingController descController;
   late int selectedCategoryId;
   late int _userId;
 
   @override
+
   void initState() {
     super.initState();
+    titleController = TextEditingController(text: widget.journalTitle);
+    descController = TextEditingController(text: widget.journalDesc);
     selectedCategoryId = widget.categoryId;
     _loadUserId();
   }
@@ -38,7 +47,6 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
     _userId = id;
   });
 }
-
   @override
   Widget build(BuildContext context) {
     // Spotify colors
@@ -126,7 +134,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: _titleController,
+                        controller: titleController,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: "What do you want to achieve?",
@@ -159,7 +167,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: _descController,
+                        controller: descController,
                         style: const TextStyle(color: Colors.white),
                         maxLines: 3,
                         decoration: InputDecoration(
@@ -222,14 +230,14 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                       const SizedBox(height: 32),
 
                       // Buttons
-                      BlocConsumer<AddJournalBloc, AddJournalState>(
+                      BlocConsumer<EditJournalBloc, AddJournalState>(
                         listener: (context, state) {
-                          if (state is AddJournalLoaded) {
+                          if (state is EditJournalLoaded) {
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text(
-                                  "Journal successfully added!",
+                                  "Journal successfully edited!",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 backgroundColor: spotifyGreen,
@@ -240,7 +248,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                               ),
                             );
                             context.read<JournalsBloc>().add(LoadJournals(userId: _userId));
-                          } else if (state is AddJournalError) {
+                          } else if (state is EditJournalError) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -282,10 +290,10 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                               const SizedBox(width: 16),
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: state is AddJournalLoading
+                                  onPressed: state is EditJournalLoading
                                       ? null
                                       : () {
-                                          if (_titleController.text.isEmpty) {
+                                          if (titleController.text.isEmpty) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               const SnackBar(
@@ -299,13 +307,13 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
 
                                           final requestBody =
                                               AddJournalRequestModel(
-                                            title: _titleController.text,
-                                            desc: _descController.text,
+                                            title: titleController.text,
+                                            desc: descController.text,
                                             categoryJournalId:
                                                 selectedCategoryId,
                                           );
-                                          context.read<AddJournalBloc>().add(
-                                                AddJournal(requestBody),
+                                          context.read<EditJournalBloc>().add(
+                                                EditJournal(requestBody, widget.journalId),
                                               );
                                         },
                                   style: ElevatedButton.styleFrom(

@@ -1,43 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_frontend/bloc/addJournals/bloc/add_journal_bloc.dart';
-import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
-import 'package:flutter_frontend/models/request/add_journal_request_model.dart';
-import 'package:flutter_frontend/utils/session_manager.dart';
+import 'package:flutter_frontend/bloc/addGoals/add_goal_bloc.dart';
+import 'package:flutter_frontend/models/request/add_goal_request_model.dart';
 
-class AddJournalDialogs extends StatefulWidget {
+class EditGoalDialogs extends StatefulWidget {
+  final int goalId;
   final int categoryId;
-  final String categoryTitle; // Tambahkan parameter untuk judul kategori
+  final String categoryTitle;
+  final String goalTitle;
+  final String goalDesc;
 
-  const AddJournalDialogs({
+  const EditGoalDialogs({
     Key? key,
+    required this.goalId,
     required this.categoryId,
-    required this.categoryTitle, // Tambahkan parameter ini
+    required this.categoryTitle,
+    required this.goalTitle,
+    required this.goalDesc,
   }) : super(key: key);
 
   @override
-  State<AddJournalDialogs> createState() => _AddJournalDialogState();
+  State<EditGoalDialogs> createState() => _EditGoalDialogState();
 }
 
-class _AddJournalDialogState extends State<AddJournalDialogs> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
+class _EditGoalDialogState extends State<EditGoalDialogs> {
+  late TextEditingController titleController;
+  late TextEditingController descController;
   late int selectedCategoryId;
-  late int _userId;
 
   @override
   void initState() {
     super.initState();
+    titleController = TextEditingController(text: widget.goalTitle);
+    descController = TextEditingController(text: widget.goalDesc);
     selectedCategoryId = widget.categoryId;
-    _loadUserId();
   }
-
-  void _loadUserId() async {
-  final id = await SessionManager().getUserId();
-  setState(() {
-    _userId = id;
-  });
-}
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +123,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: _titleController,
+                        controller: titleController,
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           hintText: "What do you want to achieve?",
@@ -159,7 +156,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                       ),
                       const SizedBox(height: 8),
                       TextField(
-                        controller: _descController,
+                        controller: descController,
                         style: const TextStyle(color: Colors.white),
                         maxLines: 3,
                         decoration: InputDecoration(
@@ -222,14 +219,14 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                       const SizedBox(height: 32),
 
                       // Buttons
-                      BlocConsumer<AddJournalBloc, AddJournalState>(
+                      BlocConsumer<EditGoalBloc, AddGoalState>(
                         listener: (context, state) {
-                          if (state is AddJournalLoaded) {
-                            Navigator.pop(context);
+                          if (state is EditGoalLoaded) {
+                            Navigator.pop(context, true);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: const Text(
-                                  "Journal successfully added!",
+                                  "Goals successfully edited!",
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 backgroundColor: spotifyGreen,
@@ -239,8 +236,8 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                                 ),
                               ),
                             );
-                            context.read<JournalsBloc>().add(LoadJournals(userId: _userId));
-                          } else if (state is AddJournalError) {
+                          } else if (state is EditGoalError) {
+                            print(state.message);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -282,10 +279,10 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                               const SizedBox(width: 16),
                               Expanded(
                                 child: ElevatedButton(
-                                  onPressed: state is AddJournalLoading
+                                  onPressed: state is EditGoalLoading
                                       ? null
                                       : () {
-                                          if (_titleController.text.isEmpty) {
+                                          if (titleController.text.isEmpty) {
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
                                               const SnackBar(
@@ -298,14 +295,16 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                                           }
 
                                           final requestBody =
-                                              AddJournalRequestModel(
-                                            title: _titleController.text,
-                                            desc: _descController.text,
-                                            categoryJournalId:
+                                              AddGoalRequestModel(
+                                            title: titleController.text,
+                                            desc: descController.text,
+                                            categoryGoalId:
                                                 selectedCategoryId,
+                                            status: 'belum',
                                           );
-                                          context.read<AddJournalBloc>().add(
-                                                AddJournal(requestBody),
+                                          context.read<EditGoalBloc>().add(
+                                                EditGoal(requestBody,
+                                                    widget.goalId),
                                               );
                                         },
                                   style: ElevatedButton.styleFrom(
@@ -320,7 +319,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
                                       borderRadius: BorderRadius.circular(24),
                                     ),
                                   ),
-                                  child: state is AddJournalLoading
+                                  child: state is AddGoalLoading
                                       ? const SizedBox(
                                           width: 20,
                                           height: 20,

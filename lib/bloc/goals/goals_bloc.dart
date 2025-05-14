@@ -20,3 +20,18 @@ class GoalsBloc extends Bloc<GoalsEvent, GoalsState> {
     });
   }
 }
+
+class DeleteGoalBloc extends Bloc<DeleteGoal, GoalsState> {
+  final RemoteDatasource remoteDatasource;
+  DeleteGoalBloc({required this.remoteDatasource}) : super(DeleteGoalInitial()) {
+    on<DeleteGoal>((event, emit) async {
+      emit(DeleteGoalLoading());
+      try {
+        await remoteDatasource.deleteGoal(event.id);
+        emit(DeleteGoalSuccess());
+      } catch (e) {
+        emit(DeleteGoalError(e.toString()));
+      }
+    });
+  }
+}

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/addGoals/add_goal_bloc.dart';
+import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
 import 'package:flutter_frontend/models/request/add_goal_request_model.dart';
+import 'package:flutter_frontend/utils/session_manager.dart';
 
 class AddGoalDialog extends StatefulWidget {
   final int categoryId;
@@ -21,12 +23,21 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descController = TextEditingController();
   late int selectedCategoryId;
+  late int _userId;
 
   @override
   void initState() {
     super.initState();
     selectedCategoryId = widget.categoryId;
+    _loadUserId();
   }
+
+  void _loadUserId() async {
+  final id = await SessionManager().getUserId();
+  setState(() {
+    _userId = id;
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +235,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                             ),
                           ),
                         );
+                        context.read<GoalsBloc>().add(LoadGoals(userId: _userId));
                       } else if (state is AddGoalError) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -282,9 +294,10 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
                                         title: _titleController.text,
                                         desc: _descController.text,
                                         categoryGoalId: selectedCategoryId,
+                                        status: 'belum',
                                       );
                                       context.read<AddGoalBloc>().add(
-                                            AddGoal(requestBody: request),
+                                            AddGoal(request),
                                           );
                                     },
                               style: ElevatedButton.styleFrom(

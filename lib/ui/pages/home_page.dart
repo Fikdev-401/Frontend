@@ -98,6 +98,7 @@ class _HomePageState extends State<HomePage> {
       },
     ];
 
+    
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
@@ -374,7 +375,7 @@ class _HomePageState extends State<HomePage> {
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
-                  'ur Journals',
+                  'My Journals',
                   style: TextStyle(
                     color: AppColors.white,
                     fontSize: 22,
@@ -398,7 +399,7 @@ class _HomePageState extends State<HomePage> {
                         child: Column(
                           children: [
                             const Text(
-                              'Kamu belum menambahkan goal',
+                              'Kamu belum menambahkan journal',
                               style: TextStyle(
                                   color: AppColors.lightGray,
                                   fontSize: 16,

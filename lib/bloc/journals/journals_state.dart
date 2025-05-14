@@ -17,3 +17,14 @@ final class JournalsError extends JournalsState {
   JournalsError({required this.message});
 }
 
+
+final class DeleteJournalInitial extends JournalsState {}
+
+final class DeleteJournalLoading extends JournalsState {}
+
+final class DeleteJournalSuccess extends JournalsState {}
+
+final class DeleteJournalError extends JournalsState {
+  final String message;
+  DeleteJournalError({required this.message});
+}

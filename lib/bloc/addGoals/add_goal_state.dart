@@ -16,3 +16,15 @@ final class AddGoalError extends AddGoalState {
   final String message;
   AddGoalError(this.message);
 }
+
+final class EditGoalLoaded extends AddGoalState {
+  final AddGoalResponseModel goalData;
+  EditGoalLoaded(this.goalData);
+}
+
+final class EditGoalLoading extends AddGoalState {}
+
+final class EditGoalError extends AddGoalState {
+  final String message;
+  EditGoalError(this.message);
+}
