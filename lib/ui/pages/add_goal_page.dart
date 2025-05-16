@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/addGoals/add_goal_bloc.dart';
 import 'package:flutter_frontend/bloc/addJournals/bloc/add_journal_bloc.dart';
+import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
 import 'package:flutter_frontend/bloc/goalsCategory/category_goal_bloc.dart';
 import 'package:flutter_frontend/bloc/journalsCategory/category_journal_bloc.dart';
 import 'package:flutter_frontend/models/request/add_goal_request_model.dart';
 import 'package:flutter_frontend/models/request/add_journal_request_model.dart';
+import 'package:flutter_frontend/utils/session_manager.dart';
 
 class AddGoalPage extends StatefulWidget {
   const AddGoalPage({super.key});
@@ -23,61 +25,24 @@ class _AddGoalPageState extends State<AddGoalPage> {
   // Selected category
   int? _selectedCategoryId;
   String _selectedCategoryTitle = 'Select Category';
+  late int id;
+
+  void getUserId() async {
+    final session = SessionManager();
+    id = await session.getUserId() ?? 0;
+  }
+
+  @override
+  void initState() {
+    getUserId();
+    super.initState();
+  }
 
   @override
   void dispose() {
     _titleController.dispose();
     _descController.dispose();
     super.dispose();
-  }
-
-  void _saveJournal() {
-    // Validate form
-    if (_titleController.text.isEmpty) {
-      _showErrorSnackBar('Please enter a title');
-      return;
-    }
-
-    if (_descController.text.isEmpty) {
-      _showErrorSnackBar('Please enter a description');
-      return;
-    }
-
-    if (_selectedCategoryId == null) {
-      _showErrorSnackBar('Please select a category');
-      return;
-    }
-
-    // Create journal object
-    final journal = {
-      'title': _titleController.text,
-      'desc': _descController.text,
-      'categoryId': _selectedCategoryId,
-      'categoryTitle': _selectedCategoryTitle,
-    };
-
-    // Here you would typically save the journal to your database
-    print('Saving journal: $journal');
-
-    // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Journal saved successfully'),
-        backgroundColor: Color(0xFF1DB954),
-      ),
-    );
-
-    final requestBody = AddGoalRequestModel(
-      title: _titleController.text,
-      desc: _descController.text,
-      categoryGoalId: _selectedCategoryId,
-      status: 'belum',
-    );
-    context.read<AddGoalBloc>().add(
-          AddGoal(requestBody),
-        );
-    // Navigate back
-    Navigator.pop(context);
   }
 
   void _showErrorSnackBar(String message) {
@@ -355,22 +320,44 @@ class _AddGoalPageState extends State<AddGoalPage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: surfaceColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: TextField(
-                            controller: _titleController,
-                            style: const TextStyle(color: textColor),
-                            decoration: const InputDecoration(
-                              hintText: 'Enter journal title',
-                              hintStyle: TextStyle(color: secondaryTextColor),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 14),
-                            ),
-                          ),
+
+                        BlocConsumer<AddGoalBloc, AddGoalState>(
+                          listener: (context, state) {
+                            if (state is AddGoalSuccess) {
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Goal added successfully'),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
+                              context
+                                  .read<GoalsBloc>()
+                                  .add(LoadGoals(userId: id));
+                            } else if (state is AddGoalError) {
+                              _showErrorSnackBar(state.message);
+                            }
+                          },
+                          builder: (context, state) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: surfaceColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: TextField(
+                                controller: _titleController,
+                                style: const TextStyle(color: textColor),
+                                decoration: const InputDecoration(
+                                  hintText: 'Enter journal title',
+                                  hintStyle:
+                                      TextStyle(color: secondaryTextColor),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 14),
+                                ),
+                              ),
+                            );
+                          },
                         ),
 
                         const SizedBox(height: 24),
@@ -437,7 +424,17 @@ class _AddGoalPageState extends State<AddGoalPage> {
                   ),
                   padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
                   child: GestureDetector(
-                    onTap: _saveJournal,
+                    onTap: () {
+                      final requestBody = AddGoalRequestModel(
+                        title: _titleController.text,
+                        desc: _descController.text,
+                        categoryGoalId: _selectedCategoryId,
+                        status: 'belum',
+                      );
+                      context.read<AddGoalBloc>().add(
+                            AddGoal(requestBody),
+                          );
+                    },
                     child: Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 16),

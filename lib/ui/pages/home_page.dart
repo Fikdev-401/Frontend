@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
 import 'package:flutter_frontend/bloc/journalsCategory/category_journal_bloc.dart';
+import 'package:flutter_frontend/bloc/user/user_bloc.dart';
 import 'package:flutter_frontend/core/core.dart';
 import 'package:flutter_frontend/ui/dialogs/add_journal_dialogs.dart';
 import 'package:flutter_frontend/ui/pages/detail_journal_page.dart';
@@ -25,11 +26,16 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadUserId() async {
     final id = await SessionManager().getUserId();
+    if (id == null) {
+      print('User ID belum ada di SharedPreferences.');
+      return;
+    }
+
     setState(() {
       userId = id;
     });
 
-    // fetch data goals berdasarkan user
+    context.read<UserBloc>().add(GetUserById(id: id));
     context.read<JournalsBloc>().add(LoadJournals(userId: id));
     context.read<CategoryJournalBloc>().add(LoadCategoryJournal());
   }
@@ -98,7 +104,6 @@ class _HomePageState extends State<HomePage> {
       },
     ];
 
-    
     return Scaffold(
       backgroundColor: AppColors.backgroundDark,
       body: SafeArea(
@@ -169,13 +174,32 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Good Morning Dev :3',
-                      style: TextStyle(
-                        color: AppColors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    BlocBuilder<UserBloc, UserState>(
+                      builder: (context, state) {
+                        if (state is UserLoading) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (state is UserLoaded) {
+                          final name = state.data.name;
+                          return Text(
+                            'Good Morning ${name}',
+                            style: const TextStyle(
+                              color: AppColors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        } else if (state is UserError) {
+                          print(state.message);
+                          return Center(
+                              child: Text(
+                            state.message,
+                            style: TextStyle(color: AppColors.white),
+                          ));
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
                     ),
                     const SizedBox(height: 4),
                     Text(

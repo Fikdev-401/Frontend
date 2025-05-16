@@ -44,7 +44,7 @@ class _EditJournalDialogState extends State<EditJournalDialogs> {
   void _loadUserId() async {
   final id = await SessionManager().getUserId();
   setState(() {
-    _userId = id;
+    _userId = id ?? 0;
   });
 }
   @override

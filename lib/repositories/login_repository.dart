@@ -8,10 +8,11 @@ class LoginRepository {
 
   Future<Either<String, LoginResponseModel>> login(LoginRequestModel requestBody) async {
     try {
-      final result = await apiService.login(requestBody);
-      return right(result);
+      final response = await apiService.login(requestBody);
+      print("Raw login response: ${response.toJson()}");
+      return Right(response);
     } catch (e) {
-      return left('Failed to login: $e');
+      return Left(e.toString());
     }
   }
 }

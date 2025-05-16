@@ -35,7 +35,7 @@ class _AddJournalDialogState extends State<AddJournalDialogs> {
   void _loadUserId() async {
   final id = await SessionManager().getUserId();
   setState(() {
-    _userId = id;
+    _userId = id ?? 0;
   });
 }
 

@@ -35,7 +35,7 @@ class _AddGoalDialogState extends State<AddGoalDialog> {
   void _loadUserId() async {
   final id = await SessionManager().getUserId();
   setState(() {
-    _userId = id;
+    _userId = id ?? 0;
   });
 }
 

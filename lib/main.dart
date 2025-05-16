@@ -8,6 +8,7 @@ import 'package:flutter_frontend/bloc/auth/register/register_bloc.dart';
 import 'package:flutter_frontend/bloc/goalsCategory/category_goal_bloc.dart';
 import 'package:flutter_frontend/bloc/journals/journals_bloc.dart';
 import 'package:flutter_frontend/bloc/journalsCategory/category_journal_bloc.dart';
+import 'package:flutter_frontend/bloc/user/user_bloc.dart';
 import 'package:flutter_frontend/data/datasource/remote_datasource.dart';
 import 'package:flutter_frontend/routes.dart';
 import 'package:flutter_frontend/ui/pages/add_journal_pages.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    
     final remoteDatasource = RemoteDatasource();
     return MultiBlocProvider(
         providers: [
@@ -49,6 +51,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (_) => EditJournalBloc()),
           BlocProvider(create: (_) => DeleteJournalBloc(remoteDatasource: remoteDatasource)),
           BlocProvider(create: (_) => DeleteGoalBloc(remoteDatasource: remoteDatasource)),
+          BlocProvider(create: (_) => UserBloc()),
           
         ],
         child: MaterialApp(

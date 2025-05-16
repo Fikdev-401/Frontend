@@ -31,7 +31,7 @@ class _TaskPageState extends State<TaskPage> {
     });
 
     // fetch data goals berdasarkan user
-    context.read<GoalsBloc>().add(LoadGoals(userId: id));
+    context.read<GoalsBloc>().add(LoadGoals(userId: id ?? 0));
     context.read<CategoryGoalBloc>().add(LoadCategoryGoal());
   }
 

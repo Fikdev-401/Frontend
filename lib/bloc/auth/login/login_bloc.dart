@@ -17,6 +17,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       result.fold(
         (errorMessage) => emit(LoginError(errorMessage)),
         (loginData) {
+          print("Login response ID: ${loginData.id}");
           final sessionManager = SessionManager();
           sessionManager.saveSession(loginData.token, loginData.id);
           emit(LoginSuccess(loginData));

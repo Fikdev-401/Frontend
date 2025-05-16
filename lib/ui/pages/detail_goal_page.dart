@@ -37,7 +37,7 @@ class _DetailGoalPageState extends State<DetailGoalPage> {
 
   void getUserId() async {
     final session = SessionManager();
-    userId = await session.getUserId();
+    userId = await session.getUserId() ?? 0;
   }
 
   @override

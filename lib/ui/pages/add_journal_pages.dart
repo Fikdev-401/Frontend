@@ -26,7 +26,7 @@ class _AddJournalPageState extends State<AddJournalPage> {
 
   void getUserId() async {
     final session = SessionManager();
-    id = await session.getUserId();
+    id = await session.getUserId() ?? 0;
   }
 
   @override

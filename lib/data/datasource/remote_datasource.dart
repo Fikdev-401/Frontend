@@ -4,6 +4,7 @@ import 'package:flutter_frontend/data/models/category_journal.dart'
     as catJournal;
 import 'package:flutter_frontend/data/models/goals.dart';
 import 'package:flutter_frontend/data/models/journals.dart';
+import 'package:flutter_frontend/data/models/users.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 
 class RemoteDatasource {
@@ -24,8 +25,8 @@ class RemoteDatasource {
       ),
     );
 
-    print('Tipe data: ${response.data.runtimeType}');
-    print('Isi response: ${response.data}');
+    // print('Tipe data: ${response.data.runtimeType}');
+    // print('Isi response: ${response.data}');
 
     return DataGoals.fromJson(response.data);
   }
@@ -45,6 +46,26 @@ class RemoteDatasource {
     );
 
     return DataJournals.fromJson(response.data);
+  }
+
+  Future<DataUser> getUserById({required int id}) async {
+    
+    final token =
+        await session.getToken(); // ambil token dari SharedPreferences
+
+    final response = await dio.get(
+      '/users/$id',
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    // print(response.data);
+
+    return DataUser.fromJson(response.data);
   }
 
   Future<DataCategoryGoals> getCategoryGoal() async {
@@ -77,7 +98,7 @@ class RemoteDatasource {
       ),
     );
 
-    print(response.data); // Ini List<dynamic>
+    // print(response.data); // Ini List<dynamic>
 
     final List<catJournal.CategoryJournal> categories = (response.data as List)
         .map((item) => catJournal.CategoryJournal.fromJson(item))
