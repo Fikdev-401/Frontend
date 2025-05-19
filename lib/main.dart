@@ -14,10 +14,16 @@ import 'package:flutter_frontend/routes.dart';
 import 'package:flutter_frontend/ui/pages/add_journal_pages.dart';
 import 'package:flutter_frontend/ui/pages/auth/splash_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
+
 
 // import 'core/core.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null); // Inisialisasi Bahasa Indonesia
+  Intl.defaultLocale = 'id_ID';
   runApp(const MyApp());
 }
 

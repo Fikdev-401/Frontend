@@ -4,6 +4,7 @@ import 'package:flutter_frontend/bloc/auth/login/login_bloc.dart';
 import 'package:flutter_frontend/bloc/user/user_bloc.dart';
 import 'package:flutter_frontend/core/constants/colors.dart';
 import 'package:flutter_frontend/routes.dart';
+import 'package:intl/intl.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -13,8 +14,14 @@ class ProfilePage extends StatelessWidget {
     // Mock user data
     final Map<String, dynamic> userData = {
       'avatar': '/placeholder.svg?height=100&width=100',
-
     };
+
+    String getSince(String createdAt) {
+      final createdDate = DateTime.parse(createdAt);
+      final formattedDate =
+          DateFormat("d MMMM yyyy", "id_ID").format(createdDate);
+      return 'Member since $formattedDate';
+    }
 
     return Scaffold(
       backgroundColor: const Color(0xFF121212), // Spotify dark background
@@ -40,7 +47,6 @@ class ProfilePage extends StatelessWidget {
 
                         return Column(
                           children: [
-                            const SizedBox(height: 10),
                             // Profile picture with premium badge
                             Stack(
                               alignment: Alignment.center,
@@ -58,7 +64,6 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 5),
                             // User name and info
                             Text(
                               name,
@@ -76,6 +81,10 @@ class ProfilePage extends StatelessWidget {
                                 fontSize: 16,
                               ),
                             ),
+                            Text(
+                              getSince(data.createdAt),
+                              style: TextStyle(color: Colors.white),
+                            )
                           ],
                         );
                       } else {
@@ -93,7 +102,7 @@ class ProfilePage extends StatelessWidget {
           // Achievements Section
 
           // Recent Activity
-   
+
           // Settings Section
           SliverToBoxAdapter(
             child: Padding(
