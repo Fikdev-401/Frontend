@@ -19,11 +19,13 @@ class User {
   final int id;
   final String name;
   final String email;
+  final String createdAt;
 
   User({
     required this.id,
     required this.name,
     required this.email,
+    required this.createdAt,
   });
 
   // factory untuk parsing dari JSON
@@ -32,6 +34,7 @@ class User {
       id: json['id'],
       name: json['name'],
       email: json['email'],
+      createdAt: json['created_at'],
     );
   }
 
@@ -40,6 +43,7 @@ class User {
       'id': id,
       'name': name,
       'email': email,
+      'created_at': createdAt,
     };
   }
 }

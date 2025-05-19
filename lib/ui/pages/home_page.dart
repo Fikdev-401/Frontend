@@ -17,12 +17,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int? userId;
+  String time = '';
 
   @override
   void initState() {
     super.initState();
     _loadUserId();
   }
+
+  String getGreeting() {
+        final hour = DateTime.now().hour;
+        if (hour >= 5 && hour < 12) {
+          return 'Good Morning';
+        } else if (hour >= 12 && hour < 17) {
+          return 'Good Afternoon';
+        } else if (hour >= 17 && hour < 21) {
+          return 'Good Evening';
+        } else {
+          return 'Good Night';
+        }
+      }
 
   Future<void> _loadUserId() async {
     final id = await SessionManager().getUserId();
@@ -45,32 +59,26 @@ class _HomePageState extends State<HomePage> {
     // Data for playlists
     final List<Map<String, dynamic>> data = [
       {
-        'title': 'Tujuan hidup',
         'color': Colors.purple,
         'icon': Icons.lightbulb_outline,
       },
       {
-        'title': 'Rasa syukur',
         'color': Colors.orange,
         'icon': Icons.favorite_border,
       },
       {
-        'title': 'Pelajaran',
         'color': Colors.teal,
         'icon': Icons.school_outlined,
       },
       {
-        'title': 'Inspirasi',
         'color': Colors.blue,
         'icon': Icons.emoji_objects_outlined,
       },
       {
-        'title': 'Motivasi',
         'color': Colors.red,
         'icon': Icons.trending_up,
       },
       {
-        'title': 'Refleksi',
         'color': Colors.green,
         'icon': Icons.self_improvement_outlined,
       },
@@ -81,25 +89,21 @@ class _HomePageState extends State<HomePage> {
       {
         'title': 'Motivasi Pagi',
         'type': 'Daily Motivation',
-        'imageUrl': '/placeholder.svg?height=150&width=150',
         'color': Colors.orange,
       },
       {
         'title': 'Quotes Inspiratif',
         'type': 'Collection',
-        'imageUrl': '/placeholder.svg?height=150&width=150',
         'color': Colors.purple,
       },
       {
         'title': 'Meditasi Malam',
         'type': 'Relaxation',
-        'imageUrl': '/placeholder.svg?height=150&width=150',
         'color': Colors.indigo,
       },
       {
         'title': 'Affirmasi Harian',
         'type': 'Self-improvement',
-        'imageUrl': '/placeholder.svg?height=150&width=150',
         'color': Colors.teal,
       },
     ];
@@ -122,8 +126,10 @@ class _HomePageState extends State<HomePage> {
                         CircleAvatar(
                           radius: 20,
                           backgroundColor: AppColors.surface,
-                          backgroundImage:
-                              const AssetImage('assets/images/dev.jpg'),
+                          child: Icon(
+                            Icons.person,
+                            color: AppColors.lightGray,
+                          ),
                         ),
                         Positioned(
                           right: 0,
@@ -182,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                         } else if (state is UserLoaded) {
                           final name = state.data.name;
                           return Text(
-                            'Good Morning ${name}',
+                            '${getGreeting()}, $name',
                             style: const TextStyle(
                               color: AppColors.white,
                               fontSize: 28,
@@ -348,12 +354,6 @@ class _HomePageState extends State<HomePage> {
                                   offset: const Offset(0, 2),
                                 ),
                               ],
-                              image: DecorationImage(
-                                image: NetworkImage(
-                                    recentlyPlayed[index]['imageUrl']),
-                                fit: BoxFit.cover,
-                                opacity: 0.7,
-                              ),
                             ),
                             child: Center(
                               child: Icon(
