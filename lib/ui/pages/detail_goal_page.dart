@@ -2,8 +2,12 @@ import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_frontend/bloc/addGoals/add_goal_bloc.dart';
 import 'package:flutter_frontend/bloc/goals/goals_bloc.dart';
+import 'package:flutter_frontend/models/request/add_goal_request_model.dart';
 import 'package:flutter_frontend/ui/dialogs/edit_goal_dialogs.dart';
+import 'package:flutter_frontend/ui/pages/home_page.dart';
+import 'package:flutter_frontend/ui/pages/main_page.dart';
 import 'package:flutter_frontend/utils/session_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +20,7 @@ class DetailGoalPage extends StatefulWidget {
   final String desc;
   final int categoryId;
   final String categoryTitle;
+  final String status;
 
   DetailGoalPage({
     super.key,
@@ -24,6 +29,7 @@ class DetailGoalPage extends StatefulWidget {
     required this.desc,
     required this.categoryId,
     required this.categoryTitle,
+    required this.status,
   });
 
   @override
@@ -286,45 +292,77 @@ class _DetailGoalPageState extends State<DetailGoalPage> {
   }
 
   Widget _buildStartButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        print('Starting goal with ID: ${widget.id}');
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1DB954),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF1DB954).withOpacity(0.3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(
-              Icons.play_arrow_rounded,
-              color: Colors.white,
-              size: 28,
-            ),
-            const SizedBox(width: 130),
-            const Text(
-              'START',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                letterSpacing: 1.2,
+    return BlocListener<EditGoalBloc, AddGoalState>(
+        listener: (context, state) {
+          if (state is AddGoalSuccess) {
+            context.read<GoalsBloc>().add(LoadGoals(userId: userId));
+          } else if (state is AddGoalError) {
+            print(state.message);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Gagal memulai goal')),
+            );
+          }
+        },
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MainPage(),
               ),
+            );
+            print('Starting goal with ID: ${widget.id}');
+            var status = widget.status;
+            if (status == 'belum') {
+              status = 'proses';
+            } else if (status == 'proses') {
+              status = 'selesai';
+            }
+            final request = AddGoalRequestModel(
+              title: widget.title,
+              desc: widget.desc,
+              categoryGoalId: widget.categoryId,
+              status: status,
+            );
+            context.read<EditGoalBloc>().add(
+                  EditGoal(request, widget.id),
+                );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1DB954),
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF1DB954).withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.play_arrow_rounded,
+                  color: Colors.white,
+                  size: 28,
+                ),
+                const SizedBox(width: 130),
+                Text(
+                  widget.status == 'proses' ? 'CONTINUE' : 'START',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget _buildActionButton(
